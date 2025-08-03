@@ -9,4 +9,6 @@ class Account extends Model
 {
     /** @use HasFactory<\Database\Factories\AccountFactory> */
     use HasFactory;
+
+    protected $fillable = ['name', 'type', 'balance', 'currency_id', 'active'];
 }
