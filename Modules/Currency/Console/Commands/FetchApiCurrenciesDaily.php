@@ -21,8 +21,6 @@ class FetchApiCurrenciesDaily extends Command
      */
     public function handle()
     {
-
-        $apiToken = "fbd30e414a2fcb5b26108b54";
         $response = Http::get("https://v6.exchangerate-api.com/v6/$apiToken/latest/USD");
 
         if ($response->successful()) {
