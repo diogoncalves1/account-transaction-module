@@ -18,18 +18,34 @@ class AccountController extends AppController
 
     public function store(AccountRequest $request)
     {
-        //
 
-        $this->accountRepository->store($request);
+        $response = $this->accountRepository->store($request);
+
+        return $response;
     }
 
     public function update(Request $request, string $id)
     {
         //
+
+        $response = $this->accountRepository->update($request, $id);
     }
 
     public function destroy(string $id)
     {
         //
+
+        $response = $this->accountRepository->destroy($id);
+
+        return $response;
+    }
+
+    public function dataTable(Request $request)
+    {
+        //
+
+        $response = $this->accountRepository->dataTable($request);
+
+        return $response;
     }
 }
