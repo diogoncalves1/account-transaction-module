@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\AppController;
+use App\Http\Requests\AccountRequest;
+use App\Repositories\AccountRepository;
 use Illuminate\Http\Request;
 
-class AccountController extends Controller
+class AccountController extends AppController
 {
-    public function index()
+    private AccountRepository $accountRepository;
+
+    public function __construct(AccountRepository $accountRepository)
     {
-        //
+        $this->accountRepository = $accountRepository;
     }
 
-    public function store(Request $request)
+    public function store(AccountRequest $request)
     {
         //
-    }
 
-    public function show(string $id)
-    {
-        //
+        $this->accountRepository->store($request);
     }
 
     public function update(Request $request, string $id)

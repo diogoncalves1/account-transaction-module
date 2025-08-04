@@ -10,5 +10,11 @@ class Account extends Model
     /** @use HasFactory<\Database\Factories\AccountFactory> */
     use HasFactory;
 
+    protected $table = "accounts";
     protected $fillable = ['name', 'type', 'balance', 'currency_id', 'active'];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
