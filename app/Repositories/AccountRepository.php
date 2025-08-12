@@ -15,6 +15,15 @@ class AccountRepository implements RepositoryInterface
         return Account::all();
     }
 
+    public function allUser()
+    {
+        $userId = Auth::id();
+
+        return Account::whereHas("accounts_user", function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })->get();
+    }
+
     public function store(Request $request)
     {
         try {

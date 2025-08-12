@@ -1,4 +1,5 @@
 {
     "Currency": true,
-    "Users": true
+    "Users": true,
+    "Category": true
 }

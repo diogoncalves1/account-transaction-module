@@ -20,36 +20,33 @@ class AccountController extends AppController
 
         Session::flash('page', 'accounts');
 
-        return view('admin.accounts.index');
+        return view('frontend.accounts.index');
     }
 
     public function create()
     {
         //
-
         Session::flash('page', 'accounts');
 
-        return view('admin.accounts.form');
+        return view('frontend.accounts.form');
     }
     public function edit(string $id)
     {
         //
-
         Session::flash('page', 'accounts');
 
         $account = $this->accountRepository->show($id);
 
-        return view('admin.accounts.form', compact('account'));
+        return view('frontend.accounts.form', compact('account'));
     }
 
     public function show(string $id)
     {
         //
-
         Session::flash('page', 'accounts');
 
         $account = $this->accountRepository->show($id);
 
-        return view('admin.accounts.show', compact('account'));
+        return view('frontend.accounts.show', compact('account'));
     }
 }
