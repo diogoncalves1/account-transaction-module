@@ -18,23 +18,20 @@ class AccountController extends AppController
 
     public function store(AccountRequest $request)
     {
-
         $response = $this->accountRepository->store($request);
 
         return $response;
     }
 
-    public function update(Request $request, string $id)
+    public function update(AccountRequest $request, string $id)
     {
-        //
-
         $response = $this->accountRepository->update($request, $id);
+
+        return $response;
     }
 
     public function destroy(string $id)
     {
-        //
-
         $response = $this->accountRepository->destroy($id);
 
         return $response;
@@ -42,8 +39,6 @@ class AccountController extends AppController
 
     public function dataTable(Request $request)
     {
-        //
-
         $response = $this->accountRepository->dataTable($request);
 
         return $response;
