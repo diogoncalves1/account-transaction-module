@@ -18,10 +18,11 @@ class AccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'balance' => $this->faker->randomFloat(2, 0, 10000),
             'name' => $this->faker->word(),
+            'type' => $this->faker->randomElement(['cash', 'bank_account', 'credit_card', 'digital_wallet']),
+            'balance' => $this->faker->randomFloat(2, 0, 10000),
             'currency_id' => Currency::pluck('id')->random(),
-            'type' => $this->faker->randomElement(['cash', 'bank_account', 'credit_card', 'digital_wallet'])
+            'active' => $this->faker->boolean(80)
         ];
     }
 }

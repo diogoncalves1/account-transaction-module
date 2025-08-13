@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use App\Models\Account;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Category\Entities\Category;
+use Modules\User\Entities\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Transaction>
@@ -18,9 +20,14 @@ class TransactionFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::pluck('id')->random(),
             'account_id' => Account::pluck('id')->random(),
-            'amount' => $this->faker->randomFloat(2, 0, 100000),
             'type' => $this->faker->randomElement(['revenue', 'expense']),
+            'amount' => $this->faker->randomFloat(2, 0, 100000),
+            'date' => $this->faker->date('Y-m-d'),
+            'description' => $this->faker->sentence(),
+            'status' => $this->faker->randomElement(['completed', 'pending']),
+            'category_id' => Category::pluck('id')->random()
         ];
     }
 }
