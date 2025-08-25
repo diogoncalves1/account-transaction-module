@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('account_users', function (Blueprint $table) {
             $table->unsignedBigInteger('account_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('shared_role_id');
+            $table->unsignedBigInteger('shared_role_id')->nullable();
 
             $table->enum('status', ['pending', 'accepted', 'revoked'])->default('pending');
 
@@ -25,7 +25,7 @@ return new class extends Migration
 
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('shared_role_id')->references('id')->on('shared_role');
+            $table->foreign('shared_role_id')->references('id')->on('shared_roles')->onDelete('set null');
 
             $table->unique(['account_id', 'user_id']);
         });
