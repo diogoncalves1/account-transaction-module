@@ -7,7 +7,7 @@ use Exception;
 class UnauthorizedCreateTransactionException extends Exception
 {
     protected $message;
-    protected $code = 500;
+    protected $code = 403;
 
     public function __construct()
     {
