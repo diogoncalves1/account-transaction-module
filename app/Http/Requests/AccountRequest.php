@@ -25,7 +25,7 @@ class AccountRequest extends FormRequest
             'name' => 'required|string|max:255',
             'currency_id' => 'required|exists:currencies,id',
             'type' => 'required|string',
-            'initial_amount' => 'nullable|numeric|min:0'
+            'active' => 'required'
         ];
     }
 }
