@@ -29,7 +29,8 @@ class TransactionRequest extends FormRequest
             'date' => 'required|date',
             'description' => 'nullable|string',
             'status' => 'nullable|in:pending,completed',
-            'category_id' => 'required|exists:categories,id'
+            'category_id' => 'required|exists:categories,id',
+            // 'currency_id' => 'required|exists:currencies,id'
         ];
     }
 }
