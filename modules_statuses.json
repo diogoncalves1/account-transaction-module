@@ -1,5 +1,8 @@
 {
     "Currency": true,
     "Users": true,
-    "Category": true
+    "Category": true,
+    "AccountTransaction": true,
+    "SharedRoles": true,
+    "Accounts": true
 }
