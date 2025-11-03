@@ -4,5 +4,6 @@
     "Category": true,
     "AccountTransaction": true,
     "SharedRoles": true,
-    "Accounts": true
+    "Accounts": true,
+    "UserPreferences": true
 }
