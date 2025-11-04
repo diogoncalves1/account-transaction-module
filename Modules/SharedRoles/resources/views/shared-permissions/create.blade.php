@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin | Permissão de Partilha ')
+@section('title', 'Modulo Papel de Partilha | ' . (isset($sharedPermission) ? 'Editar' : 'Adicionar') . ' Permissão de Partilha')
 
 @section('breadcrumb')
 <li class="breadcrumb-item"><a class="text-white" href="{{ route('admin.shared-permissions.index') }}">Permissões de partilha</a></li>
@@ -13,7 +13,7 @@
         @csrf
         @if(isset($sharedPermission))
         @method('PUT')
-        <input type="hidden" name="shared_permission_id" value="{{ $sharedPermission->id }}">
+        <input type="hidden" id="sharedPermissionId" name="shared_permission_id" value="{{ $sharedPermission->id }}">
         @else
         @method('POST')
         @endif
