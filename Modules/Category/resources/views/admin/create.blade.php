@@ -1,9 +1,9 @@
-@extends('layouts.frontend')
+@extends('layouts.admin')
 
 @section('title', (isset($category) ? 'Editar' : 'Adicionar') . ' Categoria')
 
 @section('breadcrumb')
-<li class="breadcrumb-item active"><a class="text-white" href="{{ route('categories.index') }}">Categorias</a>
+<li class="breadcrumb-item active"><a class="text-white" href="{{ route('admin.categories.index') }}">Categorias</a>
 </li>
 <li class="breadcrumb-item active">{{ isset($category) ? 'Editar' : 'Adicionar' }}</li>
 @endsection
@@ -16,12 +16,16 @@
 
 @section('content')
 <section class="content">
-    <form id="form" action="{{ isset($category) ? route('api.categories.update', $category->id) : route('api.categories.store')  }}"
+    <form action="{{ isset($category) ? route('admin.categories.update', $category->id) : route('admin.categories.store')  }}"
         method="POST">
         @csrf
         @if(isset($category))
+        @method('PUT')
         <input hidden name="category_id" value="{{ $category->id }}" type="text">
+        @else
+        @method('POST')
         @endif
+        <input type="hidden" name="default" value="1">
         <div class="row">
             <div class="col-12">
                 <div class="card card-primary">
@@ -31,6 +35,24 @@
                     <div class="card-body">
                         <div class="row">
                             <input type="hidden" name="default" value="1">
+
+                            <div class="form-group col-md-6">
+                                <label>Tipo <span class="text-danger">*</span></label>
+                                <select name="type" class="select2 validate form-control" style="width: 100%" required>
+                                    <option value="">Escolha a Categoria</option>
+                                    <option value="revenue"
+                                        {{  isset($category) && $category->type == 'revenue' ? "selected" : '' }}>
+                                        {{ __('category::attributes.categories.type.revenue') }}
+                                    </option>
+                                    <option value="expense"
+                                        {{  isset($category) && $category->type == 'expense' ? "selected" : '' }}>
+                                        {{ __('category::attributes.categories.type.expense') }}
+                                    </option>
+                                </select>
+                                <span class="error invalid-feedback">Preencha este
+                                    campo</span>
+                                <span class="success valid-feedback">Campo preenchido</span>
+                            </div>
 
                             <div class="form-group col-md-6">
                                 <label>Icone</label>
@@ -43,27 +65,13 @@
                                     data-colorpicker-id="1" data-original-title="" title="">
                             </div>
 
-                            <div class="form-group col-md-6">
-                                <label>Tipo <span class="text-danger">*</span></label>
-                                <select name="type" class="select2 validate form-control" style="width: 100%" required>
-                                    <option value="">Escolha a Categoria</option>
-                                    <option value="revenue"
-                                        {{  isset($category) && $category->type == 'revenue' ? "selected" : '' }}>
-                                        {{ __('frontend.revenue') }}
-                                    </option>
-                                    <option value="expense"
-                                        {{  isset($category) && $category->type == 'expense' ? "selected" : '' }}>
-                                        {{ __('frontend.expense') }}
-                                    </option>
-                                </select>
-                            </div>
 
                             <div class="form-group col-6">
                                 <label>Categoria Pai</label>
                                 <select name="parent_id" class="select2 form-control" style="width: 100%">
                                     <option value="">Selecione a Categoria</option>
                                     @foreach ($categories as $categoryParent)
-                                    <option value="{{ $categoryParent->id }}" {{ isset($category) && $category->parent_id == $categoryParent->id ? "selected" : '' }}>{{ $categoryParent->name }}</option>
+                                    <option value="{{ $categoryParent->id }}" {{ isset($category) && $category->parent_id == $categoryParent->id ? "selected" : '' }}>{{ $categoryParent->name->en }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -77,7 +85,7 @@
                         <ul class="nav nav-pills">
                             @foreach ($languages as $key => $language)
                             <li class="nav-item"><a class="nav-link {{ $key == 0 ? "active" : '' }}"
-                                    href="#{{ $language->name }}" data-toggle="tab">{{ $language->value; }}</a>
+                                    href="#{{ $language }}" data-toggle="tab">{{ strtoupper($language) }}</a>
                             </li>
                             @endforeach
                         </ul>
@@ -85,13 +93,12 @@
                     <div class="card-body">
                         <div class="tab-content">
                             @foreach ($languages as $key => $language)
-                            <div class="tab-pane {{ $key == 0 ? "active" : '' }}" id="{{ $language->name }}">
-
+                            <div class="tab-pane {{ $key == 0 ? "active" : '' }}" id="{{ $language }}">
                                 <div class="form-group">
-                                    <label for="inputDisplayName">Nome em {{ $language->value }} <span
+                                    <label for="inputDisplayName">Nome em {{ strtoupper($language) }} <span
                                             class="text-danger">*</span></label>
-                                    <input type="text" name="name[{{ $language->name }}]"
-                                        value="{{ isset($category->name) ? json_decode($category->name)->{$language->name} : "" }}"
+                                    <input type="text" name="name[{{ $language }}]"
+                                        value="{{ isset($category->name) ? $category->name->{$language} ?? '' : '' }}"
                                         class="validate form-control">
                                     <span class="error invalid-feedback">Preencha este
                                         campo</span>
