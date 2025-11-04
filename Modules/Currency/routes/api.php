@@ -1,17 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Currency\Http\Controllers\CurrencyController;
+use Modules\Currency\Http\Controllers\Api\CurrencyController;
 
 Route::group([
-    // "middleware" => "auth"
+    'prefix' => 'v1',
 ], function () {
     Route::group([
-        'prefix' => 'currencies/'
+        "middleware" => ["auth", "web"]
     ], function () {
-        Route::get("check-code", [\Modules\Currency\Http\Controllers\Api\CurrencyController::class, "checkCode"]);
-        Route::get("update-rates", [\Modules\Currency\Http\Controllers\Api\CurrencyController::class, "updateRates"]);
-        Route::get('data', [\Modules\Currency\Http\Controllers\Api\CurrencyController::class, 'dataTable']);
+        Route::apiResource('currencies', CurrencyController::class, ['except' => ['index', 'show']]);
+        Route::group([
+            'prefix' => 'currencies',
+            'as' => 'currencies.'
+        ], function () {
+            Route::get("check-code", [CurrencyController::class, "checkCode"])->name('check-code');
+            Route::get("update-rates", [CurrencyController::class, "updateRates"])->name('update-rates');
+        });
     });
-    Route::resource('currencies', \Modules\Currency\Http\Controllers\Api\CurrencyController::class, ['except' => ['index', 'create', 'edit']]);
+
+    Route::apiResource('currencies', CurrencyController::class, ['except' => ['store', 'update', 'destroy']]);
 });
