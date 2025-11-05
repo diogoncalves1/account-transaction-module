@@ -2,56 +2,106 @@
 
 namespace Modules\Category\Http\Controllers\Api;
 
-use App\Http\Controllers\AppController;
+use App\Http\Controllers\ApiController;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Modules\Category\DataTables\CategoryApiDataTable;
+use Modules\Category\Http\Requests\CategoryGuestRequest;
+use Modules\Category\Http\Requests\UpdateCategoryGuestRequest;
+use Modules\Category\Http\Resources\CategoryResource;
 use Modules\Category\Repositories\CategoryRepository;
 
-class CategoryController extends AppController
+class CategoryController extends ApiController
 {
-    private CategoryRepository $categoryRepository;
+    private CategoryRepository $repository;
 
     public function __construct(CategoryRepository $categoryRepository)
     {
-        $this->categoryRepository = $categoryRepository;
+        $this->repository = $categoryRepository;
     }
 
-    public function store(Request $request)
+    /**
+     * Display a listing of the resource.
+     * @param CategoryApiDataTable $dataTable
+     * @return JsonResponse
+     */
+    public function index(CategoryApiDataTable $dataTable): JsonResponse
     {
-        $response = $this->categoryRepository->store($request);
-
-        return $response;
-    }
-    public function update(Request $request, string $id)
-    {
-        $response = $this->categoryRepository->update($request, $id);
-
-        return $response;
-    }
-
-    public function destroy(string $id)
-    {
-        $response = $this->categoryRepository->destroy($id);
-
-        return $response;
+        try {
+            return $dataTable->ajax();
+        } catch (\Exception $e) {
+            return $this->fail(__('exceptions.generic'), $e, 500);
+        }
     }
 
-    public function dataTable(Request $request)
+    /**
+     * Store a newly created resource in storage.
+     * @param CategoryGuestRequest $request
+     * @return JsonResponse
+     */
+    public function store(CategoryGuestRequest $request): JsonResponse
     {
-        // $this->allowedAction('getCategories');
+        try {
+            $category = $this->repository->store($request);
 
-        $request->merge(['default' => 1]);
-
-        $data = $this->categoryRepository->dataTable($request);
-
-        return response()->json($data);
+            return $this->ok(new CategoryResource($category), __('category::messages.categories.store', ['name' => $category->name]));
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->fail($e->getMessage() ?? __('category::messages.categories.errors.store'), $e, $e->getCode());
+        }
     }
 
-    public function dataTableUser(Request $request)
+    /**
+     * Show the specified resource.
+     * @param Request $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function show(Request $request, string $id): JsonResponse
     {
-        $request->merge(['default' => 0]);
+        try {
+            $category = $this->repository->showUser($request, $id);
 
-        $data = $this->categoryRepository->dataTable($request);
+            return $this->ok(new CategoryResource($category));
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->fail($e->getMessage(), $e, $e->getCode());
+        }
+    }
 
-        return response()->json($data);
+    /**
+     * Update the specified resource in storage.
+     * @param UpdateCategoryGuestRequest $request
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function update(UpdateCategoryGuestRequest $request, string $id): JsonResponse
+    {
+        try {
+            $category = $this->repository->update($request, $id);
+
+            return $this->ok(new CategoryResource($category), __('category::messages.categories.update', ['name' => $category->name]));
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->fail($e->getMessage() ?? __('category::messages.categories.errors.update'), $e, $e->getCode());
+        }
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function destroy(Request $request, string $id): JsonResponse
+    {
+        try {
+            $category = $this->repository->destroy($id, $request);
+
+            return $this->ok(message: __('category::messages.categories.destroy', ['name' => $category->name]));
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->fail($e->getMessage() ?? __('category::messages.categories.errors.destroy'), $e, $e->getCode());
+        }
     }
 }

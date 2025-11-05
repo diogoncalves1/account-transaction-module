@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin | Papeis de Partilhas ')
+@section('title', 'Modulo Papel de Partilha | Papeis de Partilha')
 
 @section('breadcrumb')
 <li class="breadcrumb-item active">Papeis de partilha</li>
@@ -22,16 +22,7 @@
                         <a href="{{ route('admin.shared-roles.create') }}" class="btn btn-default">Adicionar Papel de Partilha</a>
                     </div>
                     <div class="card-body">
-                        <table id="table" class="table table-bordered table-striped ">
-                            <thead>
-                                <tr>
-                                    <th>Código</th>
-                                    <th>Nome</th>
-                                    <th>Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
+                        <table id="data-table" class="table table-bordered table-striped ">
                         </table>
                     </div>
                 </div>
@@ -42,7 +33,6 @@
 @endsection
 
 @section('script')
-<script src="/assets/admin/js/shared-roles/index.js"></script>
 <script src="/assets/js/allIndex.js"></script>
 
 <script src="/admin-lte/plugins/datatables/jquery.dataTables.min.js"></script>
@@ -51,4 +41,6 @@
 <script src="/admin-lte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
 <script src="/admin-lte/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
 <script src="/admin-lte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+
+{{ $dataTable->scripts() }}
 @endsection

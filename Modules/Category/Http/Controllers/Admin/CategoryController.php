@@ -2,54 +2,118 @@
 
 namespace Modules\Category\Http\Controllers\Admin;
 
-use App\Http\Controllers\AppController;
-use Modules\Category\Repositories\CategoryRepository;
+use App\Http\Controllers\ApiController;
+use Illuminate\Contracts\Support\Renderable;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
-use Modules\Category\Enums\Language;
+use Modules\Category\Repositories\CategoryRepository;
+use Modules\Category\DataTables\CategoryDataTable;
+use Modules\Category\Http\Requests\CategoryRequest;
 
-class CategoryController extends AppController
+class CategoryController extends ApiController
 {
-    private CategoryRepository $categoryRepository;
-
+    private CategoryRepository $repository;
 
     public function __construct(CategoryRepository $categoryRepository)
     {
-        $this->categoryRepository = $categoryRepository;
-    }
-    public function index()
-    {
-        // $this->allowedAction('viewCategories');
-
-        Session::flash('page', 'categories');
-
-        return view('category::admin.categories.index');
+        $this->repository = $categoryRepository;
     }
 
-    public function create()
+    /**
+     * Display a listing of the resource.
+     * @param CategoryDataTable $dataTable
+     */
+    public function index(CategoryDataTable $dataTable)
     {
-        // $this->allowedAction('addCategory');
+        $this->allowedAction('viewCategoryDefault');
 
-        Session::flash('page', 'categories');
-
-        $categories = $this->categoryRepository->allAdmin();
-
-        $languages = Language::cases();
-
-        return view('category::admin.categories.form', compact('categories', 'languages'));
+        return $dataTable->render('category::admin.index');
     }
 
-    public function edit(string $id)
+    /**
+     * Show the form for creating a new resource.
+     * @return Renderable
+     * @throws AuthorizationException
+     */
+    public function create(): Renderable
     {
-        // $this->allowedAction('editCategory');
+        $this->allowedAction('createCategoryDefault');
 
-        Session::flash('page', 'categories');
+        $categories = $this->repository->allAdmin();
+        $languages = config('languages');
 
-        $category = $this->categoryRepository->show($id);
+        return view('category::admin.create', compact('categories', 'languages'));
+    }
 
-        $categories = $this->categoryRepository->allAdmin();
+    /**
+     * Store a newly created resource in storage.
+     * @param CategoryRequest $request
+     * @return RedirectResponse
+     * @throws AuthorizationException
+     */
+    public function store(CategoryRequest $request): RedirectResponse
+    {
+        $this->allowedAction('createCategoryDefault');
 
-        $languages = Language::cases();
+        $category = $this->repository->store($request);
 
-        return view('category::admin.categories.form', compact('category', 'categories', 'languages'));
+        Session::flash('success', __('category::messages.categories.store', ['name' => $category->name->{app()->getLocale()}]));
+
+        return redirect()->route('admin.categories.index');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     * @param string $id
+     * @return Renderable
+     * @throws AuthorizationException
+     */
+    public function edit(string $id): Renderable
+    {
+        $this->allowedAction('editCategoryDefault');
+
+        $category = $this->repository->show($id);
+        $categories = $this->repository->allAdmin();
+        $languages = config('languages');
+
+        return view('category::admin.create', compact('category', 'categories', 'languages'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     * @param CategoryRequest $request
+     * @param string $id
+     * @return RedirectResponse
+     */
+    public function update(CategoryRequest $request, string $id): RedirectResponse
+    {
+        $this->allowedAction('editCategoryDefault');
+
+        $category = $this->repository->update($request, $id);
+
+        Session::flash('success', __('category::messages.categories.update', ['name' => $category->name->{app()->getLocale()}]));
+
+        return redirect()->route('admin.categories.index');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function destroy(string $id): JsonResponse
+    {
+        try {
+            $this->allowedAction('destroyCategoryDefault');
+
+            $category = $this->repository->destroy($id);
+
+            return $this->ok(message: __('category::messages.categories.destroy', ['name' => $category->name->{app()->getLocale()}]));
+        } catch (\Exception $e) {
+            Log::error($e);
+            return $this->fail($e->getMessage(), $e, $e->getCode());
+        }
     }
 }

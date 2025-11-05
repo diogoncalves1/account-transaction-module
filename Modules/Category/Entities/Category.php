@@ -4,15 +4,24 @@ namespace Modules\Category\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Category\Casts\CategoryNameCast;
 use Modules\User\Entities\User;
 
 class Category extends Model
 {
-    /** @use HasFactory<\Database\Factories\CategoryFactory> */
+    /** @use HasFactory<\Modules\Category\Database\Factories\CategoryFactory> */
     use HasFactory;
 
     protected $table = 'categories';
     protected $fillable = ['name', 'type', 'icon', 'color', 'default', 'parent_id', 'user_id'];
+    protected $casts = [
+        'name' => CategoryNameCast::class
+    ];
+
+    protected static function newFactory()
+    {
+        return \Modules\Category\Database\Factories\CategoryFactory::new();
+    }
 
     public function user()
     {
