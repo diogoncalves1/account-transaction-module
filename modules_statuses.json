@@ -1,9 +1,11 @@
 {
-    "Currency": true,
-    "Users": true,
-    "Category": true,
-    "AccountTransaction": true,
-    "SharedRoles": true,
     "Accounts": true,
+    "ApiResponder": true,
+    "Category": true,
+    "Currency": true,
+    "Friends": true,
+    "Permission": true,
+    "SharedRoles": true,
+    "Users": true,
     "UserPreferences": true
 }
