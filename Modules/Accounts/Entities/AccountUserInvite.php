@@ -2,22 +2,24 @@
 namespace Modules\Accounts\Entities;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Model;
 use Modules\SharedRoles\Entities\SharedRole;
 use Modules\User\Entities\User;
 
-class AccountUser extends Pivot
+class AccountUserInvite extends Model
 {
-    /** @use HasFactory<\Modules\Accounts\Database\Factories\AccountUserFactory> */
+    /** @use HasFactory<\Modules\Accounts\Database\Factories\AccountUserInviteFactory> */
     use HasFactory;
 
-    protected $table    = 'account_users';
-    protected $fillable = ['user_id', 'account_id', 'shared_role_id'];
+    /**
+     * The attributes that are mass assignable.
+     */
+    protected $fillable = ['user_id', 'account_id', 'shared_role_id', 'status'];
+    protected $table    = 'account_user_invites';
 
     protected static function newFactory()
     {
-        return \Modules\Accounts\Database\Factories\AccountUserFactory::new ();
+        return \Modules\Accounts\Database\Factories\AccountUserInviteFactory::new ();
     }
 
     public function user()
@@ -28,9 +30,9 @@ class AccountUser extends Pivot
     {
         return $this->belongsTo(Account::class);
     }
-    public function sharedRole(): BelongsTo
+    public function sharedRole()
     {
-        return $this->belongsTo(SharedRole::class, 'shared_role_id');
+        return $this->belongsTo(SharedRole::class);
     }
 
     public function scopeUser($query, $userId)
@@ -40,5 +42,9 @@ class AccountUser extends Pivot
     public function scopeAccount($query, $accountId)
     {
         return $query->where("account_id", $accountId);
+    }
+    public function scopeStatus($query, $status)
+    {
+        return $query->where('status', $status);
     }
 }
